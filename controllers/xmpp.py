@@ -6,12 +6,11 @@ from models import Route, Estimation
 
 from utils import formatter
 
-__all__ = ["XMPP"]
+__all__ = ["XMPP", "XMMPPresence"]
 
 class XMPP(BaseHandler):
     def post(self):
         message = xmpp.Message(self.request.POST)
-        user = message.sender.split("/")[0]
 
         if message.body == "routes":
             r = Route.get_or_fetch("mbta")
@@ -24,3 +23,13 @@ class XMPP(BaseHandler):
             message.reply(formatter.JSON(e))
         else:
             message.reply("...")
+
+class XMMPPresence(BaseHandler):
+    def post(self, available):
+        import logging
+
+        user = self.request.get("from").split("/")[0]
+        if available == "unavailable":
+            logging.info("%s has gone offline..." % user)
+        else:
+            logging.info("%s comes back online..." % user)
