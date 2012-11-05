@@ -32,12 +32,12 @@ class Prediction(ndb.Model):
     _stop_tag = None
 
     @ndb.ComputedProperty
-    def human_readable_time(self):
+    def eastern_time(self):
         if self.epoch_time:
             return datetime.datetime.fromtimestamp(self.epoch_time/1000)
 
     @ndb.ComputedProperty
-    def human_readable_dir_title(self):
+    def dir_title(self):
         if self._direction_tag:
             return ndb.Key("Direction", self._direction_tag, parent = ndb.Key("Route", self._route_tag, parent = ndb.Key("Agency", self._agency_tag))).get().title
 

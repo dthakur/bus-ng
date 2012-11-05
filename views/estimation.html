@@ -78,8 +78,8 @@
                     }
 
                     $(elem).find(".time").text(caption);
-                    $(elem).find(".run").text(prediction.human_readable_dir_title);
-                    $(elem).find(".human_readable_time").text("Will be there @ " + prediction.human_readable_time);
+                    $(elem).find(".run").text(prediction.dir_title);
+                    $(elem).find(".human_readable_time").text("Will be there @ " + prediction.eastern_time + " (EST)");
                     $("#predictions").append(elem);
 
                     if (counter == 3)

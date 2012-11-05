@@ -7,7 +7,7 @@ import json
 import datetime
 import time
 
-from tz import UTC, EST
+from tz import UTC, Eastern
 
 # https://gist.github.com/1572547
 def JSON(obj, prefetch = False, attr = None):
@@ -19,7 +19,7 @@ def JSON(obj, prefetch = False, attr = None):
             return list(obj)
 
         elif isinstance(obj, datetime.datetime):
-            return obj.replace(tzinfo=UTC()).astimezone(EST()).strftime("%a, %d %b %Y %H:%M:%S")
+            return obj.replace(tzinfo=UTC()).astimezone(Eastern).strftime("%a, %d %b %Y %H:%M:%S")
 
         elif isinstance(obj, time.struct_time):
             return list(obj)
