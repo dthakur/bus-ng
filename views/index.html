@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>.: bus-ng.10ur.org :.</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    </head>
+    <body>
+
+        <br/>
+        <br/>
+
+        <div class="container">
+
+            <div class="hero-unit">
+                <h1>Welcome to Bus-NG</h1>
+                <br />
+                <p>Bus-NG is yet another alternative read-only API for accessing the public data available from <a href="nextbus.com/xmlFeedDocs/NextBusXMLFeed.pdf">NextBus</a>.</p>
+                <br/>
+                <p><a href="estimation.html?agency_tag=mbta&route_tag=1&direction_tag=1_0_var0&stop_tag=1" role="button" class="btn btn-info" data-toggle="modal">Show estimation page</a></p>
+                <br/>
+                <span class="label label-important">Important</span>
+                <h4>Accuracy of Data</h4>
+
+                <p>Data retrieved from the underlying NextBus API is cached and stored by Bus-NG. Static data including route, direction and stop configurations is cached for up to two week after fetch, and may therefore take up to fourteen days to update when the underlying data changes. Vehicle location and preditiction data is cached for up to 30 seconds.</p>
+
+                <br/>
+                <p><a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal"><i class="icon-exclamation-sign icon-white"></i> Disclaimer</a></p>
+            </div>
+
+            <div class="modal hide fade" id="myModal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3>Disclaimer</h3>
+                </div>
+                <div class="modal-body">
+                    <p>This API and other tools are provided in the hope that it is useful, but there are no availability guarantees nor any warranty about the accuracy of the provided data. Use of this data is at the risk of the user.</p>
+
+                    <p>The author reserves the right to deny access to Bus-NG to anyone at any time and for any reason. While backward compatibility will be preserved as much as possible, the author reserves the right to change any aspect of the provided API at any time for any reason and with no notice.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                </div>
+            </div>
+
+            <div class="tabbable">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#schema" data-toggle="tab">Schema</a></li>
+                    <li><a href="#agency" data-toggle="tab">Agencies</a></li>
+                    <li><a href="#route" data-toggle="tab">Routes</a></li>
+                    <li><a href="#direction" data-toggle="tab">Directions</a></li>
+                    <li><a href="#stop" data-toggle="tab">Stops</a></li>
+                    <li><a href="#vehicle" data-toggle="tab">Vehicles</a></li>
+                    <li><a href="#prediction" data-toggle="tab">Predictions</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="schema" class="tab-pane active">
+                        <h2>Schema</h2>
+                        <p>All API access is over HTTP, and accessed from the bus-ng.10ur.org domain. All data is received as JSON.
+                        <pre>
+$ curl -i http://bus-ng.10ur.org/agencies/mbta
+
+HTTP/1.0 200
+Server: Development/1.0
+Date: Thu, 25 Oct 2012 02:57:56 GMT
+X-RateLimit-Limit: 10
+X-RateLimit-Remaining: 9
+Content-Type: application/json; charset=utf-8
+Cache-Control: max-age=0, private, must-revalidate
+X-Content-Type-Options: nosniff
+Content-Length: 4793
+
+{
+  "region_title": "Massachusetts",
+  "tag": "mbta",
+  "title": "MBTA"
+}
+                        </pre>
+                        <br/>
+                        <h2>Rate Limiting</h2>
+                        <p>API enforces a 10 request per 3 minutes limit. You can check the returned HTTP headers of any API request to see your current status:</p>
+
+                        <pre>
+$ curl -i http://bus-ng.10ur.org/agencies/mbta
+
+HTTP/1.0 200
+X-RateLimit-Limit: 10
+X-RateLimit-Remaining: 9
+                        </pre>
+                        <br/>
+                        <h2>Poll Interval</h2>
+                        <p>Calls are optimized for polling with the “Last-Modified” header. If there are no new notifications, you will see a "304 Not Modified" response, leaving your current rate limit untouched. There is an “X-Poll-Interval” header that specifies how often (in seconds) you are allowed to poll. In times of high server load, the time may increase. Please obey the header.</p>
+                        <pre>
+$ curl -I http://bus-ng.10ur.org/agencies/mbta/routes/1/directions/1_0_var0/stops/1/predictions/
+
+HTTP/1.0 200
+Last-Modified: Sat, 27 Oct 2012 20:14:15 GMT
+X-Poll-Interval: 30
+
+# Pass the Last-Modified header exactly
+$ curl -I http://bus-ng.10ur.org/agencies/mbta/routes/1/directions/1_0_var0/stops/1/predictions/  -H "If-Modified-Since: Sat, 27 Oct 2012 20:14:15 GMT"
+HTTP/1.1 304 Not Modified
+X-Poll-Interval: 30
+                        </pre>
+                        <br/>
+                        <h2>JSON-P Callbacks</h2>
+                        <p>You can send a ?callback parameter to any GET call to have the results wrapped in a JSON function. This is typically used when browsers want to embed Bus-NG content in web pages by getting around cross domain issues. The response includes the same data output as the regular API, plus the relevant HTTP Header information.</p>
+
+                        <pre>
+$ curl -i http://bus-ng.10ur.org/agencies/mbta?callback=foo
+
+foo({
+  "region_title": "Massachusetts",
+  "tag": "mbta",
+  "title": "MBTA"
+})
+                        </pre>
+                    </div> <!-- agency -->
+
+
+                    <div id="agency" class="tab-pane">
+                        <h2>List of Agencies in JSON</h2>
+                        <p>Returns a list of agencies that can be queried via this API.</p>
+                        <pre>
+URL: /agencies/
+                        </pre>
+                        <p><a class="btn" href="agencies/" target="_blank">Show an example &raquo;</a></p>
+                        <br/>
+                        <h2>Properties of a specific Agency in JSON</h2>
+                        <p>Returns an object representing the selected agency.</p>
+                        <pre>
+URL: /agencies/:id
+                        </pre>
+                        <p><a class="btn" href="http://bus-ng.10ur.org/agencies/mbta" target="_blank">Show an example &raquo;</a></p>
+                    </div> <!-- agency -->
+
+                    <div id="route" class="tab-pane">
+                        <h2>List of Routes in JSON</h2>
+                        <p>Returns a list of routes operated by the selected agency.</p>
+                        <pre>
+URL: /agencies/:id/routes/
+                        </pre>
+                        <p><a class="btn" href="agencies/mbta/routes/" target="_blank">Show an example &raquo;</a></p>
+                        <br/>
+                        <h2>Properties of a specific Route in JSON</h2>
+                        <p>Returns an object representing the selected route.</p>
+                        <pre>
+URL: /agencies/:id/routes/:id
+                        </pre>
+                        <p><a class="btn" href="http://bus-ng.10ur.org/agencies/mbta/routes/1" target="_blank">Show an example &raquo;</a></p>
+                    </div> <!-- route -->
+
+                    <div id="direction" class="tab-pane">
+                        <h2>List of Directions in JSON</h2>
+                        <p>Returns a list of directions of selected route.</p>
+                        <pre>
+URL: /agencies/:id/routes/:id/directions/
+                        </pre>
+                        <p><a class="btn" href="agencies/mbta/routes/1/directions/" target="_blank">Show an example &raquo;</a></p>
+                        <br/>
+                        <h2>Properties of a specific Direction in JSON</h2>
+                        <p>Returns an object representing the selected direction.</p>
+                        <pre>
+URL: /agencies/:id/routes/:id/directions/:id
+                        </pre>
+                        <p><a class="btn" href="agencies/mbta/routes/1/directions/1_0_var0" target="_blank">Show an example &raquo;</a></p>
+                    </div> <!-- direction -->
+
+                    <div id="stop" class="tab-pane">
+                        <h2>List of Stops in JSON</h2>
+                        <p>Returns a list of stop of selected direction.</p>
+                        <pre>
+URL: /agencies/:id/routes/:id/directions/:id/stops/
+                        </pre>
+                        <p><a class="btn" href="agencies/mbta/routes/1/directions/1_0_var0/stops/" target="_blank">Show an example &raquo;</a></p>
+                        <br/>
+                        <h2>Properties of a specific Stop in JSON</h2>
+                        <p>Returns an object representing the selected stop.</p>
+                        <pre>
+URL: /agencies/:id/routes/:id/directions/:id/stops/:id
+                        </pre>
+                        <p><a class="btn" href="agencies/mbta/routes/1/directions/1_0_var0/stops/1" target="_blank">Show an example &raquo;</a></p>
+                    </div> <!-- stop -->
+
+                    <div id="vehicle" class="tab-pane">
+                        <h2>Vehicles for Agency in JSON</h2>
+                        <p>Returns the positions of all vehicles operated by agency.</p>
+                        <pre>
+URL: /agencies/:id/vehicles/
+                        </pre>
+                        <p><a class="btn" href="agencies/mbta/vehicles/" target="_blank">Show an example &raquo;</a></p>
+                        <h2>Vehicles for Route</h2>
+                        <p>Returns the positions of all vehicles on selected route.</p>
+                        <pre>
+URL: /agencies/:id/route/:id/vehicles/
+                        </pre>
+                        <p><a class="btn" href="agencies/mbta/routes/1/vehicles/" target="_blank">Show an example &raquo;</a></p>
+                    </div> <!-- vehicle -->
+
+                    <div id="prediction" class="tab-pane">
+                        <h2>Prediction</h2>
+                        <p>Returns a list of predicted arrivals for the selected stop including only vehicles from the selected route.</p>
+                        <pre>
+URL: /agencies/:id/routes/:id/directions/:id/stops/:id/predictions/
+                        </pre>
+                        <p><a class="btn" href="agencies/mbta/routes/1/directions/1_0_var0/stops/1/predictions/" target="_blank">Show an example &raquo;</a></p>
+                    </div> <!-- prediction -->
+
+                </div> <!-- tab-content -->
+            </div> <!-- tabbable -->
+
+            <hr>
+
+            <footer>
+                <p>
+                    <small>
+                        Developed by S.Çağlar Onur. Runs on Google App Engine and uses NextBus data. See <a href="https://github.com/caglar10ur/bus-ng">Github</a> for the code.
+                        <br/>
+                        API inspired by <a href="http://proximobus.appspot.com/">ProximoBus</a>
+                    </small>
+                </p>
+            </footer>
+
+        </div> <!-- /container -->
+        <script type="text/javascript">
+
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-27859053-2']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+
+        </script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script src="bootstrap/js/bootstrap.min.js"></script>
+    </body>
+</html>

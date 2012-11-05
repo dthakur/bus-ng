@@ -1,0 +1,146 @@
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <title>.: bus-ng.10ur.org :.</title>
+        <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/jquery.getUrlParam.js"></script>
+        <script type="text/javascript">
+
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-27859053-2']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+
+        </script>
+        <script type="text/javascript">
+
+            var secondsToUpdate = 31;
+
+            function poll() {
+                $.getJSON(URL, handleJSON);
+            }
+
+            function tick() {
+                if (secondsToUpdate <= 0) {
+                    secondsToUpdate = 31;
+                } else {
+                    secondsToUpdate--;
+                    $("#time-to-update").html("This page will <strong>automatically refresh</strong> (refreshing in " + secondsToUpdate + " seconds...)");
+                    setTimeout(tick, 1000);
+                }
+            }
+
+            function generateAlert(type, message) {
+                $("#alert").html('<div class="alert ' + type + '"><button type="button" class="close" data-dismiss="alert">×</button>' + message + '</div>');
+            }
+
+            function handleJSON(results) {
+                estimation = results.estimations;
+
+                $("#created").html("");
+                $("#expires").html("");
+                $("#predictions").html("");
+
+                $("#stopname").text(estimation.agency_title + " / " + estimation.stop_title);
+                $("#routename").text(estimation.route_title);
+
+                var counter = 0;
+                predictions = estimation.predictions;
+                for(i in predictions) {
+                    counter += 1;
+
+                    prediction = predictions[i];
+
+                    var elem = $('<div class="span4"><div class="hero-unit"><p class="run"><h1 class="time"></h1></p><small class="human_readable_time"</small></div></div>');
+
+                    var minutes = prediction.minutes;
+                    var caption = minutes + " min";
+
+                    if (counter == 1) {
+                        if (minutes > 10)
+                            generateAlert("alert-success", "<strong>Relax! </strong>You have plenty of time...");
+                        else if (minutes <= 10 && minutes > 5)
+                            generateAlert("alert-info", "<strong>Heads up! </strong>Bus is approaching to the stop...");
+                        else if (minutes <= 5 && minutes > 0)
+                            generateAlert("", "<strong>Hurry up! </strong>Bus is arriving soon...");
+                        else if (minutes == 0) {
+                            generateAlert("alert-error", "<strong>Be quick! </strong>Bus is arriving to the stop..");
+                            caption = prediction.is_departure ? "Departing" : "Arriving";
+                        }
+                    }
+
+                    $(elem).find(".time").text(caption);
+                    $(elem).find(".run").text(prediction.human_readable_dir_title);
+                    $(elem).find(".human_readable_time").text("Will be there @ " + prediction.human_readable_time);
+                    $("#predictions").append(elem);
+
+                    if (counter == 3)
+                        break;
+                }
+
+                if (counter == 0) {
+                    generateAlert("alert-error", "<h4>Oh snap! </h4><br ><p>No Arrivals Predicted :/ Most likely service is no longer running for today...");
+                } else {
+                    elem = $("<small></small>");
+                    $(elem).text("Expires @ " + estimation["expires"]);
+                    $("#expires").append(elem);
+
+                    elem = $("<small></small>");
+                    $(elem).text("Created @ " + estimation["created"]);
+                    $("#created").append(elem);
+
+                    setTimeout(poll, 30000);
+                    tick();
+                }
+            }
+
+            $(document).ready(function() {
+                    var agency_tag = $(document).getUrlParam("agency_tag");
+                    var route_tag = $(document).getUrlParam("route_tag");
+                    var direction_tag = $(document).getUrlParam("direction_tag");
+                    var stop_tag = $(document).getUrlParam("stop_tag");
+
+                    URL = "/agencies/" + agency_tag + "/routes/" + route_tag +  "/directions/" + direction_tag +  "/stops/" + stop_tag + "/predictions/";
+                    $.getJSON(URL, handleJSON);
+            });
+            </script>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="page-header">
+                <h1 id="stopname"></h1>
+                <h3 id="routename"></h3>
+            </div>
+
+            <div id="alert"></div>
+
+            <div class="row">
+                <div id="predictions"></div>
+            </div>
+
+            <hr>
+
+            <footer>
+                <div class="row">
+                    <div class="span3">
+                        <small id="created"></small>
+                    </div>
+                    <div class="span6">
+                        <p id="time-to-update"></p>
+                    </div>
+                    <div class="span3">
+                        <small id="expires"></small>
+                    </div>
+            </footer>
+        </div>
+    </body>
+</html>

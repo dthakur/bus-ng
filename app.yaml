@@ -1,0 +1,72 @@
+application: bus-ng
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+libraries:
+- name: webapp2
+  version: "2.5.1"
+- name: jinja2
+  version: "2.6"
+
+error_handlers:
+- error_code: over_quota
+  file: errors/over_quota.html
+
+- error_code: timeout
+  file: errors/timeout.html
+
+- error_code: dos_api_denial
+  file: errors/dos_api_denial.html
+
+handlers:
+- url: /(robots\.txt|humans\.txt|crossdomain\.xml)
+  static_files: static/\1
+  upload: static/(robots\.txt|humans\.txt|crossdomain\.xml)
+
+- url: /favicon\.ico
+  static_files: static/img/favicon.ico
+  upload: static/img/favicon.ico
+
+- url: /apple-touch-icon\.png
+  static_files: static/img/apple-touch-icon.png
+  upload: static/img/apple-touch-icon.png
+
+- url: /apple-touch-icon-precomposed\.png
+  static_files: static/img/apple-touch-icon-precomposed.png
+  upload: static/img/apple-touch-icon-precomposed.png
+
+- url: /bootstrap
+  static_dir: static/bootstrap
+
+- url: /css
+  mime_type: text/css
+  static_dir: static/css
+
+- url: /js
+  mime_type: text/javascript
+  static_dir: static/js
+
+- url: /(.*\.html)
+  static_files: views/\1
+  upload: views/(.*\.html)
+
+- url: /_ereporter.*
+  script: google.appengine.ext.ereporter.report_generator.application
+  login: admin
+
+- url: /
+  static_files: views/index.html
+  upload: views/index.html
+
+- url: /.*
+  script: main.app
+
+inbound_services:
+- xmpp_message
+- xmpp_presence
+
+builtins:
+- appstats: on #/_ah/stats/
+- remote_api: on #/_ah/remote_api/

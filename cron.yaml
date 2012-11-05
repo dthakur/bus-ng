@@ -1,0 +1,8 @@
+cron:
+- description: daily tasks
+  url: /agencies/
+  schedule: every 24 hours
+
+- description: Daily exception report
+  url: /_ereporter?sender=caglar@10ur.org
+  schedule: every day 00:00
