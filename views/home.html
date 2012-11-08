@@ -1,110 +1,146 @@
 <html>
-<head>
-    <title>Arrivals</title>
-    <meta charset='utf-8'>
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script type="text/javascript">
+    <head>
+        <meta charset='utf-8'>
+        <title>.: bus-ng.10ur.org :.</title>
+        <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script src="/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/jquery.getUrlParam.js"></script>
+        <script type="text/javascript">
 
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-27859053-2']);
-        _gaq.push(['_trackPageview']);
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-27859053-2']);
+            _gaq.push(['_trackPageview']);
 
-        (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
 
-    </script>
-    <script type="text/javascript">
+        </script>
+        <script type="text/javascript">
 
-    var URL = "/agencies/mbta/routes/747/directions/747_1_var0/stops/1807/predictions/";
-    var secondsToUpdate = 31;
+            var secondsToUpdate = 31;
 
-    function poll() {
-        $.getJSON(URL, handleJSON);
-    }
-
-    function tick() {
-        if (secondsToUpdate <= 0) {
-            secondsToUpdate = 31;
-        } else {
-            secondsToUpdate--;
-            $("#time-to-update").text(secondsToUpdate);
-            setTimeout(tick, 1000);
-        }
-    }
-
-    function handleJSON(data) {
-        estimation = data["estimations"];
-
-        $("#created").html('');
-        $("#expires").html('');
-        $("#predictions").html('');
-        $("#stopname").text(estimation["stop_title"]);
-
-        var elem = $('<li></li>');
-        $(elem).text("Expires @ " + estimation["expires"]);
-        $("#expires").append(elem);
-
-        var elem = $('<li></li>');
-        $(elem).text("Created @ " + estimation["created"]);
-        $("#created").append(elem);
-
-        var counter = 0;
-        predictions = estimation.predictions;
-        for(i in predictions) {
-            prediction = predictions[i];
-            var elem = $('<li><div class="route"></div><div class="time"></div><div class="run"></div><div class="human_readable_time"></div></li>');
-            $(elem).find('.route').text(estimation.route_title);
-
-            var caption;
-            var minutes = prediction.minutes;
-            if (minutes == 0) {
-                caption = prediction.is_departure ? "Departing" : "Arriving";
-            } else {
-                caption = minutes + " min";
+            function poll() {
+                $.getJSON(URL, handleJSON);
             }
-            $(elem).find('.time').text(caption);
 
-            $(elem).find('.run').text(prediction.dir_title);
-            $(elem).find('.human_readable_time').text("Will be there @ " + prediction.eastern_time);
-            $("#predictions").append(elem);
-
-            counter += 1;
-            if (counter == 3) {
-                break;
+            function tick() {
+                if (secondsToUpdate <= 0) {
+                    secondsToUpdate = 31;
+                } else {
+                    secondsToUpdate--;
+                    $("#time-to-update").html("This page will <strong>automatically refresh</strong> (refreshing in " + secondsToUpdate + " seconds...)");
+                    setTimeout(tick, 1000);
+                }
             }
-        }
 
-        if (counter == 0) {
-            $("#predictions").html('<li><div class="none">No Arrivals Predicted</div></li>');
-        }
+            function generateAlert(type, message) {
+                $("#alert").html('<div class="alert ' + type + '"><button type="button" class="close" data-dismiss="alert">×</button>' + message + '</div>');
+            }
 
-        setTimeout(poll, 30000);
-        tick();
-    }
+            function handleJSON(results) {
+                estimation = results.estimations;
 
-    $(document).ready(function() {
-        $.getJSON(URL, handleJSON);
-    });
-    </script>
-</head>
+                $("#created").html("");
+                $("#expires").html("");
+                $("#predictions").html("");
 
-<body>
-    <h1 id="stopname"></h1>
+                $("#stopname").text(estimation.agency_title + " / " + estimation.stop_title);
+                $("#routename").text(estimation.route_title);
 
-    <ul id="predictions">
-    </ul>
+                var counter = 0;
+                predictions = estimation.predictions;
+                for(i in predictions) {
+                    counter += 1;
 
-    <div id="bottom">
-        <ul id="created">
-        </ul>
+                    prediction = predictions[i];
 
-        <p class="misc">This page will <strong>automatically refresh</strong> (refreshing in <span id="time-to-update">30</span> seconds)</p>
-        <ul id="expires">
-        </ul>
-    </div>
-</body>
+                    var elem = $('<div class="span4"><div class="hero-unit"><p class="run"><h1 class="time"></h1></p><small class="human_readable_time"</small></div></div>');
+
+                    var minutes = prediction.minutes;
+                    var caption = minutes + " min";
+
+                    if (counter == 1) {
+                        if (minutes > 10)
+                            generateAlert("alert-success", "<strong>Relax! </strong>You have plenty of time...");
+                        else if (minutes <= 10 && minutes > 5)
+                            generateAlert("alert-info", "<strong>Heads up! </strong>Bus is approaching to the stop...");
+                        else if (minutes <= 5 && minutes > 0)
+                            generateAlert("", "<strong>Hurry up! </strong>Bus is arriving soon...");
+                        else if (minutes == 0) {
+                            generateAlert("alert-error", "<strong>Be quick! </strong>Bus is arriving to the stop..");
+                            caption = prediction.is_departure ? "Departing" : "Arriving";
+                        }
+                    }
+
+                    $(elem).find(".time").text(caption);
+                    $(elem).find(".run").text(prediction.dir_title);
+                    $(elem).find(".human_readable_time").text("Will be there @ " + prediction.eastern_time + " (EST)");
+                    $("#predictions").append(elem);
+
+                    if (counter == 3)
+                        break;
+                }
+
+                if (counter == 0) {
+                    generateAlert("alert-error", "<h4>Oh snap! </h4><br ><p>No Arrivals Predicted :/ Most likely service is no longer running for today...");
+                } else {
+                    elem = $("<small></small>");
+                    $(elem).text("Expires @ " + estimation["expires"]);
+                    $("#expires").append(elem);
+
+                    elem = $("<small></small>");
+                    $(elem).text("Created @ " + estimation["created"]);
+                    $("#created").append(elem);
+
+                    setTimeout(poll, 30000);
+                    tick();
+                }
+            }
+
+            $(document).ready(function() {
+                    var agency_tag = "mbta"
+                    var route_tag = "747"
+                    var direction_tag = "747_0_var0"
+                    var stop_tag = "1807"
+
+                    URL = "/agencies/" + agency_tag + "/routes/" + route_tag +  "/directions/" + direction_tag +  "/stops/" + stop_tag + "/predictions/";
+                    $.getJSON(URL, handleJSON);
+            });
+            </script>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="page-header">
+                <h1 id="stopname"></h1>
+                <h3 id="routename"></h3>
+            </div>
+
+            <div id="alert"></div>
+
+            <div class="row">
+                <div id="predictions"></div>
+            </div>
+
+            <hr>
+
+            <footer>
+                <div class="row">
+                    <div class="span3">
+                        <small id="created"></small>
+                    </div>
+                    <div class="span6">
+                        <p id="time-to-update"></p>
+                    </div>
+                    <div class="span3">
+                        <small id="expires"></small>
+                    </div>
+            </footer>
+        </div>
+    </body>
 </html>
