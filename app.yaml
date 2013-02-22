@@ -37,9 +37,6 @@ handlers:
   static_files: static/img/apple-touch-icon-precomposed.png
   upload: static/img/apple-touch-icon-precomposed.png
 
-- url: /bootstrap
-  static_dir: static/bootstrap
-
 - url: /css
   mime_type: text/css
   static_dir: static/css

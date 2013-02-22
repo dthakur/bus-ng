@@ -37,8 +37,8 @@ app = webapp2.WSGIApplication([
     ("/agencies/([\w-]+)/routes/(\w+)/directions/(\w+)/stops/", controllers.Stops),
     ("/agencies/([\w-]+)/routes/(\w+)/directions/(\w+)/stops/(\w+)", controllers.Stops),
     ("/agencies/([\w-]+)/routes/(\w+)/directions/(\w+)/stops/(\w+)/predictions/", controllers.Estimations),
-    ("/_ah/xmpp/message/chat/", controllers.XMPP),
-    ("/_ah/xmpp/presence/(available|unavailable)/", controllers.XMMPPresence),
+#    ("/_ah/xmpp/message/chat/", controllers.XMPP),
+#    ("/_ah/xmpp/presence/(available|unavailable)/", controllers.XMMPPresence),
     ])
 
 app.error_handlers[304] = handle_error
