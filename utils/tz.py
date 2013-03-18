@@ -19,11 +19,10 @@ class UTC(tzinfo):
     def dst(self, dt):
         return timedelta(0)
 
-# In the US, DST starts at 2am (standard time) on the first Sunday in April.
-DSTSTART = datetime(1, 4, 1, 2)
-# and ends at 2am (DST time; 1am standard time) on the last Sunday of Oct.
-# which is the first Sunday on or after Oct 25.
-DSTEND = datetime(1, 10, 25, 1)
+# 2 am on the second Sunday in March
+DSTSTART = datetime(1, 3, 8, 2)
+ # 1 am on the first Sunday in November
+DSTEND = datetime(1, 11, 1, 1)
 
 class USTimeZone(tzinfo):
 
@@ -54,7 +53,6 @@ class USTimeZone(tzinfo):
             return ZERO
         assert dt.tzinfo is self
 
-        # Find first Sunday in April & the last in October.
         start = first_sunday_on_or_after(DSTSTART.replace(year=dt.year))
         end = first_sunday_on_or_after(DSTEND.replace(year=dt.year))
 
