@@ -60,7 +60,10 @@ class Vehicle(ndb.Model):
             secs_since_report = int(elem.get("secsSinceReport"))
             predictable = bool(elem.get("predictable"))
             heading = int(elem.get("heading"))
-            speedKmHr = float(elem.get("speedKmHr"))
+            try:
+                speedKmHr = float(elem.get("speedKmHr"))
+            except:
+                speedKmHr = 0
             v = Vehicle(id = vehicle_id, vehicle_id = vehicle_id, route_tag = route_tag, dir_tag = dir_tag, location = location, secs_since_report = secs_since_report, predictable = predictable, heading= heading, speedKmHr = speedKmHr)
             vehicles.append(v)
 
