@@ -60,10 +60,10 @@ handlers:
 - url: /.*
   script: main.app
 
-inbound_services:
-- xmpp_message
-- xmpp_presence
-
-builtins:
-- appstats: on #/_ah/stats/
-- remote_api: on #/_ah/remote_api/
+#inbound_services:
+#- xmpp_message
+#- xmpp_presence
+#
+#builtins:
+#- appstats: on #/_ah/stats/
+#- remote_api: on #/_ah/remote_api/
