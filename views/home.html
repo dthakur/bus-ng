@@ -3,8 +3,8 @@
     <head>
         <title>.: bus-ng.10ur.org :.</title>
         <meta charset="utf-8">
-        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
-        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
         <script type="text/javascript" src="js/jquery.getUrlParam.js"></script>
         <script type="text/javascript">
@@ -59,7 +59,7 @@
 
                     prediction = predictions[i];
 
-                    var elem = $('<div class="span4"><div class="hero-unit"><p class="run"><h1 class="time"></h1></p><small class="human_readable_time"</small></div></div>');
+                    var elem = $('<div class="span4"><div class="jumbotron"><p class="run"><h1 class="time"></h1></p><small class="human_readable_time"</small></div></div>');
 
                     var minutes = prediction.minutes;
                     var caption = minutes + " min";
@@ -72,7 +72,7 @@
                         else if (minutes <= 5 && minutes > 0)
                             generateAlert("", "<strong>Hurry up! </strong>Bus is arriving soon...");
                         else if (minutes == 0) {
-                            generateAlert("alert-error", "<strong>Be quick! </strong>Bus is arriving to the stop..");
+                            generateAlert("alert-warning", "<strong>Be quick! </strong>Bus is arriving to the stop..");
                             caption = prediction.is_departure ? "Departing" : "Arriving";
                         }
                     }
@@ -87,7 +87,7 @@
                 }
 
                 if (counter == 0) {
-                    generateAlert("alert-error", "<h4>Oh snap! </h4><br ><p>No Arrivals Predicted :/ Most likely service is no longer running for today...");
+                    generateAlert("alert-danger", "<h4>Oh snap! </h4><br ><p>No Arrivals Predicted :/ Most likely service is no longer running for today...");
                 } else {
                     elem = $("<small></small>");
                     $(elem).text("Expires @ " + estimation["expires"]);
