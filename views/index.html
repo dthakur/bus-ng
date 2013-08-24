@@ -4,7 +4,7 @@
         <title>.: bus-ng.10ur.org :.</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
 
@@ -13,35 +13,38 @@
 
         <div class="container">
 
-            <div class="hero-unit">
+            <div class="jumbotron">
                 <h1>Welcome to Bus-NG</h1>
                 <br />
                 <p>Bus-NG is yet another alternative read-only API for accessing the public data available from <a href="http://www.nextbus.com/xmlFeedDocs/NextBusXMLFeed.pdf">NextBus</a>.</p>
-                <br/>
+
                 <p><a href="estimation.html?agency_tag=mbta&amp;route_tag=1&amp;direction_tag=1_0_var0&amp;stop_tag=1" role="button" class="btn btn-info" data-toggle="modal">Show estimation page</a></p>
                 <br/>
-                <span class="label label-important">Important</span>
-                <h4>Accuracy of Data</h4>
+                <span class="label label-danger">Accuracy of Data</span>
 
                 <p>Data retrieved from the underlying NextBus API is cached and stored by Bus-NG. Static data including route, direction and stop configurations is cached for up to two week after fetch, and may therefore take up to fourteen days to update when the underlying data changes. Vehicle location and preditiction data is cached for up to 30 seconds.</p>
 
                 <br/>
-                <p><a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal"><i class="icon-exclamation-sign icon-white"></i> Disclaimer</a></p>
+                <p><a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal"><i class="glyphicon glyphicon-exclamation-sign"></i> Disclaimer</a></p>
             </div>
 
-            <div class="modal hide fade" id="myModal">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3>Disclaimer</h3>
-                </div>
-                <div class="modal-body">
-                    <p>This API and other tools are provided in the hope that it is useful, but there are no availability guarantees nor any warranty about the accuracy of the provided data. Use of this data is at the risk of the user.</p>
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3>Disclaimer</h3>
+                        </div>
+                        <div class="modal-body">
+                            <p>This API and other tools are provided in the hope that it is useful, but there are no availability guarantees nor any warranty about the accuracy of the provided data. Use of this data is at the risk of the user.</p>
 
-                    <p>The author reserves the right to deny access to Bus-NG to anyone at any time and for any reason. While backward compatibility will be preserved as much as possible, the author reserves the right to change any aspect of the provided API at any time for any reason and with no notice.</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                </div>
+                            <p>The author reserves the right to deny access to Bus-NG to anyone at any time and for any reason. While backward compatibility will be preserved as much as possible, the author reserves the right to change any aspect of the provided API at any time for any reason and with no notice.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
             </div>
 
             <div class="tabbable">
@@ -237,6 +240,6 @@ URL: /agencies/:id/routes/:id/directions/:id/stops/:id/predictions/
 
         </script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     </body>
 </html>
