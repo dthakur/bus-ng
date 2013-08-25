@@ -3,10 +3,10 @@
     <head>
         <title>.: bus-ng.10ur.org :.</title>
         <meta charset="utf-8">
-        <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
-        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
         <script type="text/javascript" src="js/jquery.getUrlParam.js"></script>
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
         <script type="text/javascript">
 
             var _gaq = _gaq || [];
@@ -39,7 +39,7 @@
             }
 
             function generateAlert(type, message) {
-                $("#alert").html('<div class="alert ' + type + '"><button type="button" class="close" data-dismiss="alert">×</button>' + message + '</div>');
+                $("#alert").html('<div class="alert ' + type + '"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' + message + '</div>');
             }
 
             function handleJSON(results) {
@@ -59,7 +59,7 @@
 
                     prediction = predictions[i];
 
-                    var elem = $('<div class="span4"><div class="jumbotron"><p class="run"><h1 class="time"></h1></p><small class="human_readable_time"</small></div></div>');
+                    var elem = $('<div class="col-md-4"><div class="jumbotron"><p class="run"><h1 class="time"></h1></p><small class="human_readable_time"</small></div></div>');
 
                     var minutes = prediction.minutes;
                     var caption = minutes + " min";
