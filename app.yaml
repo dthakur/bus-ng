@@ -37,21 +37,29 @@ handlers:
   static_files: static/img/apple-touch-icon-precomposed.png
   upload: static/img/apple-touch-icon-precomposed.png
 
-- url: /css
-  mime_type: text/css
-  static_dir: static/css
-
 - url: /js
   mime_type: text/javascript
   static_dir: static/js
+
+- url: /_ereporter.*
+  script: google.appengine.ext.ereporter.report_generator.application
+  login: admin
 
 - url: /(.*\.html)
   static_files: views/\1
   upload: views/(.*\.html)
 
-- url: /_ereporter.*
-  script: google.appengine.ext.ereporter.report_generator.application
-  login: admin
+- url: /office
+  static_files: views/office.html
+  upload: views/office.html
+
+- url: /home
+  static_files: views/home.html
+  upload: views/home.html
+
+- url: /kendall
+  static_files: views/kendall.html
+  upload: views/kendall.html
 
 - url: /
   static_files: views/index.html

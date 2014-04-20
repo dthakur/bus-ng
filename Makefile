@@ -1,5 +1,5 @@
 all:
-	appcfg.py update .
+	appcfg.py --oauth2 update .
 clean:
 	find . -name "*.pyc" | xargs rm -f
 serve:
