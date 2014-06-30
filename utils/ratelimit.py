@@ -11,12 +11,18 @@ class ratelimit(object):
     """
     # The time period
     minutes = 3
+    
     # Number of allowed requests in that time period
     requests = 10
+    
     # Prefix for memcache key
-    prefix = "rl-"
+    prefix = ''
+    
     # Expiration time
     expire_after = (minutes + 1) * 60
+    
+    # memcache namespace
+    namespace = 'rl'
 
     def __init__(self, **options):
         for key, value in options.items():
@@ -25,6 +31,7 @@ class ratelimit(object):
     def __call__(self, fn):
         def wrapper(handler, *args, **kwargs):
             return self.view_wrapper(handler, fn, *args, **kwargs)
+            
         functools.update_wrapper(wrapper, fn)
         return wrapper
 
@@ -36,13 +43,15 @@ class ratelimit(object):
         # Rate limit if exceeded
         sum_of_requests = self._get_sum_of_requests(handler)
 
-        handler.response.headers["X-RateLimit-Limit"] = str(self.requests)
-        handler.response.headers["X-RateLimit-Remaining"] = str(self.requests - sum_of_requests)
+        handler.response.headers['X-Rate-Limit-Limit'] = str(self.requests)
+        handler.response.headers['X-Rate=Limit-Remaining'] = str(self.requests - sum_of_requests)
+        
         if sum_of_requests >= self.requests:
             return self.disallowed(handler)
 
         # Count successful request
         self._count_request(handler)
+        
         # Pass
         return fn(handler, *args, **kwargs)
 
@@ -52,13 +61,10 @@ class ratelimit(object):
         of requests to rate limit.
         The default behavior is to rate limit every request.
         """
-        return False if handler.request.remote_addr in ["127.0.0.1"] else True
+        return False if handler.request.remote_addr in ['127.0.0.1', 'localhost'] else True
 
     def disallowed(self, handler):
-        """
-        Returns a 403 error
-        """
-        raise handler.abort(403)
+        raise handler.abort(429)
 
     def key_extra(self, handler):
         """
@@ -71,9 +77,9 @@ class ratelimit(object):
         """
         Increases a cache value, creates the key on demand.
         """
-        added = memcache.add(key, 1, time=self.expire_after)
+        added = memcache.add(key, 1, time=self.expire_after, namespace=namespace)
         if not added:
-            memcache.incr(key)
+            memcache.incr(key, namespace=namespace)
 
     def _get_current_key(self, handler):
         """
@@ -106,7 +112,7 @@ class ratelimit(object):
         """
         Returns a list of counters to check.
         """
-        return memcache.get_multi(self._keys_to_check(handler))
+        return memcache.get_multi(self._keys_to_check(handler), namespace=namespace)
 
     def _get_sum_of_requests(self, handler):
         """
