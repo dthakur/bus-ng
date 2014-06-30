@@ -44,7 +44,7 @@ class ratelimit(object):
         sum_of_requests = self._get_sum_of_requests(handler)
 
         handler.response.headers['X-Rate-Limit-Limit'] = str(self.requests)
-        handler.response.headers['X-Rate=Limit-Remaining'] = str(self.requests - sum_of_requests)
+        handler.response.headers['X-Rate-Limit-Remaining'] = str(self.requests - sum_of_requests)
         
         if sum_of_requests >= self.requests:
             return self.disallowed(handler)
@@ -77,9 +77,9 @@ class ratelimit(object):
         """
         Increases a cache value, creates the key on demand.
         """
-        added = memcache.add(key, 1, time=self.expire_after, namespace=namespace)
+        added = memcache.add(key, 1, time=self.expire_after, namespace=self.namespace)
         if not added:
-            memcache.incr(key, namespace=namespace)
+            memcache.incr(key, namespace=self.namespace)
 
     def _get_current_key(self, handler):
         """
@@ -112,7 +112,7 @@ class ratelimit(object):
         """
         Returns a list of counters to check.
         """
-        return memcache.get_multi(self._keys_to_check(handler), namespace=namespace)
+        return memcache.get_multi(self._keys_to_check(handler), namespace=self.namespace)
 
     def _get_sum_of_requests(self, handler):
         """
