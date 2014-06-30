@@ -24,6 +24,8 @@ class ratelimit(object):
     # memcache namespace
     namespace = 'rl'
 
+    abort_code = 503
+
     def __init__(self, **options):
         for key, value in options.items():
             setattr(self, key, value)
@@ -64,7 +66,7 @@ class ratelimit(object):
         return False if handler.request.remote_addr in ['127.0.0.1', 'localhost'] else True
 
     def disallowed(self, handler):
-        raise handler.abort(429)
+        raise handler.abort(self.abort_code)
 
     def key_extra(self, handler):
         """
